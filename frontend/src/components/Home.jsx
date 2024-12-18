@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 const Home = () => {
-   const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
+  
    useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
