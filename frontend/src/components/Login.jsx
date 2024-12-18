@@ -26,8 +26,6 @@ const Login = () => {
        }    
     }
 
-
-
     return (
         <div>
             <div className="d-flex justify-content-center align-items-center text-center vh-100" style= {{backgroundImage : "linear-gradient(#00d5ff,#0095ff,rgba(93,0,255,.555))"}}>

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const FormDataModel = require("../models/FormData");
-const { encode } = require("../jwt/index");
+const { encode, decode } = require("../jwt/index");
 const { comparePassword } = require("../bycrpt/index");
 
 router.post("/login", async (req, res) => {
