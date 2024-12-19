@@ -44,6 +44,7 @@ const Home = () => {
     <div style= {{backgroundImage : "linear-gradient(orange)"}} className="d-flex flex-column justify-content-center align-items-center text-center vh-100">
       <h1>Login Success Page</h1>
       <div className="d-flex justify-content-space-between">
+        <Link>Admin</Link>
       <Link to="/home/about" >About Us</Link>
       <Link to="/home/contact">Contact</Link>
       <Link to='/login'>Logout</Link>

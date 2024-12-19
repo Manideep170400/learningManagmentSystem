@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const authRoutes = require("./api/auth");
 const userRoutes = require("./api/user");
+const adminRoutes = require("./api/admin");
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ mongoose.connect(
 
 app.use("/api", userRoutes);
 app.use("/api", authRoutes);
+app.use("/api", adminRoutes);
 app.listen(3001, () => {
   console.log("Server listining on http://127.0.0.1:3001");
 });
