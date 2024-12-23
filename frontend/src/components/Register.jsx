@@ -8,12 +8,13 @@ const Register = () => {
     const [name, setName] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
+    const [phone, setPhone] = useState();
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        axios.post( 'http://localhost:3001/api/register', {name, email, password})
+        axios.post( 'http://localhost:3001/api/register', {name, email, password,phone})
         .then(result => {
             console.log(result);
             if(result.data === "Already registered"){
@@ -62,6 +63,20 @@ const Register = () => {
                                 required
                             /> 
                         </div>
+                        <div className="mb-3 text-start">
+                             <label htmlFor="exampleInputEmail1" className="form-label">
+                                <strong>Phone Nubmer</strong>
+                            </label>
+                            <input 
+                                type="text" 
+                                placeholder="Enter Phone Number"
+                                className="form-control" 
+                                id="exampleInputPassword1" 
+                                onChange={(event) => setPhone(event.target.value)}
+                                required
+                            />
+                        </div>
+
                         <div className="mb-3 text-start">
                             <label htmlFor="exampleInputPassword1" className="form-label">
                                 <strong>Password</strong>

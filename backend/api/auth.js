@@ -1,8 +1,11 @@
 const router = require("express").Router();
+const crypto = require("crypto");
 const FormDataModel = require("../models/FormData");
+const Otp = require("../models/userOtpVerification");
 const { encode, decode } = require("../jwt/index");
 const { comparePassword } = require("../bycrpt/index");
 const jwtMiddleware = require("../middileware/index");
+const transporter = require("../nodeMailer");
 
 router.post("/login", async (req, res) => {
   try {
@@ -107,6 +110,46 @@ router.get("/admin-route", jwtMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Error in GET /admin-route:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/otp", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  const otp = crypto.randomInt(100000, 999999).toString();
+
+  try {
+    // Send OTP via email
+    await transporter.sendMail({
+      from: process.env.USER,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}`,
+    });
+
+    console.log("OTP sent successfully");
+
+    // Save OTP to the database
+    const user = await FormDataModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const newOtp = new Otp({
+      userId: user._id,
+      otp,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // Expires in 5 minutes
+    });
+
+    await newOtp.save();
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    res.status(500).json({ message: "Error sending OTP", error });
   }
 });
 
