@@ -4,7 +4,7 @@ import Contact from './contact';
 import Login from './Login';
 import Register from './Register';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-
+import SendOtp from './sendOtp.';
 function App() {
 
   return (
@@ -16,7 +16,8 @@ function App() {
           <Route path="/login" element ={<Login/>} />
           <Route path="/home" element={<Home />} />
           <Route path="/home/about" element={<About />} />
-          <Route path='/home/contact' element={<Contact/>}/>
+          <Route path='/home/contact' element={<Contact />} />
+          <Route path='/sendotp' element={<SendOtp />} />
         </Routes>
 
       </BrowserRouter>

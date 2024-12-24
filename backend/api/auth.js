@@ -120,6 +120,12 @@ router.post("/otp", async (req, res) => {
     return res.status(400).json({ error: "Email is required" });
   }
 
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
   const otp = crypto.randomInt(100000, 999999).toString();
 
   try {
@@ -149,7 +155,34 @@ router.post("/otp", async (req, res) => {
     res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
     console.error("Error sending OTP:", error);
-    res.status(500).json({ message: "Error sending OTP", error });
+    res.status(500).json({ error: "Error sending OTP" });
+  }
+});
+
+// verify otp
+router.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ error: "Email and OTP are required" });
+  }
+
+  try {
+    const user = await FormDataModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const otpRecord = await Otp.findOne({ userId: user._id, otp });
+    if (!otpRecord) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+    if (otpRecord.expiresAt < new Date()) {
+      return res.status(400).json({ error: "OTP expired" });
+    }
+    res.status(200).json({ message: "OTP verified successfully" });
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    res.status(500).json({ message: "Error verifying OTP", error });
   }
 });
 

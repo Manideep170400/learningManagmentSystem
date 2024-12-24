@@ -16,7 +16,7 @@ const Login = () => {
            if(response.data.token){
                console.log(response.data.token);
                localStorage.setItem('token', response.data.token);
-               navigate("/home")
+               navigate("/sendotp")
            }else {
                 // alert('Login failed! Please check your credentials.');
             }
