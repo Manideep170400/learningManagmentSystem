@@ -16,12 +16,14 @@ const SendOtp = () => {
     try {
       const response = await axios.post('http://127.0.0.1:3001/api/otp', { email });
       setMessage(response.data.message);
-      navigate("/home");
+     
     } catch (error) {
       setMessage(error.response?.data?.error || "Error sending OTP");
     }
   };
-
+  const handleSubmit = () => {
+   navigate("/home");
+}
   return (
     <div
       className="d-flex justify-content-center align-items-center vh-100"
@@ -40,6 +42,7 @@ const SendOtp = () => {
           Send OTP
         </button>
         <input type='text' className="form-control mb-3" placeholder="Enter OTP" />
+        <button onClick={handleSubmit} className="btn btn-primary mb-3">submit</button>
         <p className="text-muted">{message}</p>
       </div>
     </div>
