@@ -32,7 +32,9 @@ const SendOtp = () => {
     try {
       const response = await axios.post('http://127.0.0.1:3001/api/verify-otp', { email, otp });
       setMessage(response.data.message);
-      navigate('/home'); // Redirect on successful verification
+      navigate('/home');
+      alert("login Success");
+      // Redirect on successful verification
     } catch (error) {
       setMessage(error.response?.data?.error || "Error verifying OTP");
     }
@@ -69,7 +71,7 @@ const SendOtp = () => {
             />
             <button className="btn btn-primary mb-3" onClick={handleVerifyOtp}>
               Verify OTP
-            </button>
+              </button>
           </>
         )}
         <p className="text-muted">{message}</p>
