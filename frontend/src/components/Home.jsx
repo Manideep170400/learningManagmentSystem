@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Alert from '@mui/material/Alert';  // Correct import from react-bootstrap
+import Alert from "@mui/material/Alert"; // Correct import from react-bootstrap
 
 const Home = () => {
   const styles = {
     container: {
-      padding: '2rem',
-      maxWidth: '800px',
-      margin: '0 auto',
+      padding: "2rem",
+      maxWidth: "800px",
+      margin: "0 auto",
     },
   };
 
@@ -37,17 +37,18 @@ const Home = () => {
         console.error("Error fetching protected data:", error);
       }
     };
-
+    fetchData();
     const timer = setTimeout(() => {
       setAlertVisible(false);
     }, 2000);
-    fetchData();
-
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div style={{ backgroundImage: "linear-gradient(orange)" }} className="d-flex flex-column justify-content-center align-items-center text-center vh-100">
+    <div
+      style={{ backgroundImage: "linear-gradient(orange)" }}
+      className="d-flex flex-column justify-content-center align-items-center text-center vh-100"
+    >
       <h1>Login Success Page</h1>
       <div className="d-flex justify-content-space-between">
         <Link>Admin</Link>
@@ -57,9 +58,12 @@ const Home = () => {
       </div>
 
       {/* Conditionally show the Alert */}
-      {alertVisible && <Alert severity="success">This is a success Alert.</Alert>}
+      {alertVisible && (
+        <Alert severity="success">This is a success Alert.</Alert>
+      )}
 
-      <div className="d-flex flex-column justify-content-center align-items-center text-center vh-100"
+      <div
+        className="d-flex flex-column justify-content-center align-items-center text-center vh-100"
         style={{
           backgroundImage: "linear-gradient(to right, #00c6ff, #0072ff)",
           color: "white",
