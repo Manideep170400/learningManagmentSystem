@@ -1,11 +1,12 @@
-const bcrypt = require("bcryptjs");
+import pkg from "bcryptjs";
+const { genSalt, hash, compare } = pkg;
 
 const saltRounds = 10;
 
 const hashPassworded = async (password) => {
   try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    return await bcrypt.hash(password, salt);
+    const salt = await genSalt(saltRounds);
+    return await hash(password, salt);
   } catch (error) {
     console.error("Error hashing password:", error);
     throw error;
@@ -15,11 +16,11 @@ const hashPassworded = async (password) => {
 // Compare the password with the hashed password
 const comparePassword = async (password, hashedPassword) => {
   try {
-    return await bcrypt.compare(password, hashedPassword);
+    return await compare(password, hashedPassword);
   } catch (error) {
     console.error("Error comparing passwords:", error);
     throw error;
   }
 };
 
-module.exports = { hashPassworded, comparePassword };
+export { hashPassworded, comparePassword };

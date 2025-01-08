@@ -1,12 +1,12 @@
-const express = require("express");
-const router = express.Router();
-const Admin = require("../models/admin.models");
+import { Router } from "express";
+const router = Router();
+
 
 router.post("/admin", async (req, res) => {
   try {
-    const existAdmin = await Admin.findOne({ email: "lmsadmin@gmail.com" });
+    const existAdmin = await findOne({ email: "lmsadmin@gmail.com" });
     if (!existAdmin) {
-      const newAdmin = await Admin.create({
+      const newAdmin = await create({
         email: "lmsadmin@gmail.com",
         password: "admin@123",
       });
@@ -28,4 +28,4 @@ router.post("/admin", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

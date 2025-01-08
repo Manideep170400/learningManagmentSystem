@@ -1,22 +1,22 @@
-const router = require("express").Router();
-const crypto = require("crypto");
-const FormDataModel = require("../models/FormData");
-const Otp = require("../models/userOtpVerification");
-const { encode, decode } = require("../jwt/index");
-const { comparePassword } = require("../bycrpt/index");
-const jwtMiddleware = require("../middileware/index");
-const transporter = require("../nodeMailer");
+import { Router } from "express";
+import { randomInt } from "crypto";
+import jwt from "../jwt/index.mjs";
+const { encode, decode } = jwt;
+import { comparePassword } from "../bycrpt/index.mjs"; // Correct import
+import jwtMiddleware from "../middileware/index.mjs";
+import { sendMail } from "../nodeMailer/index.mjs";
+
+const router = Router();
 
 router.post("/login", async (req, res) => {
   try {
     console.log(req.body);
     const { email, password } = req.body;
-    // console.log("role", role);
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const exist = await FormDataModel.findOne({ email });
+    const exist = await findOne({ email });
     console.log("login", exist);
     if (!exist) {
       return res.status(500).json({ error: "User not found" });
@@ -36,26 +36,17 @@ router.post("/login", async (req, res) => {
         role: exist.role,
       },
     };
-    const role = exist.role;
-    // if (role === "admin") {
-    //   return res.status(200).json({ role });
-    // }
-    // if (role === "instructor") {
-    //   return res.status(200).json({ role });
-    // }
-    // if (role === "student") {
-    //   return res.status(200).json({ role });
-    // }
     const token = await encode(payload);
 
     return res
       .status(200)
-      .json({ token, role, name: exist.name, email: exist.email });
+      .json({ token, role: exist.role, name: exist.name, email: exist.email });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
 router.get("/protected-route", async (req, res) => {
   try {
     const token = req.headers.authorization;
@@ -81,34 +72,17 @@ router.get("/user", jwtMiddleware, async (req, res) => {
     if (!req.user || !req.user.id) {
       return res.status(403).json({ error: "Invalid token" });
     }
-    const exist = await FormDataModel.findById(req.user.id);
+    const exist = await findById(req.user.id);
     if (!exist) {
       return res.status(500).json({ error: "User not found" });
     }
-    console.log("/user", exist);
     res.status(200).json({
       name: exist.name,
       email: exist.email,
       role: exist.role,
     });
   } catch (error) {
-    console.error("Error in GET /admin-route:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-router.get("/admin-route", jwtMiddleware, async (req, res) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(403).json({ error: "Access denied" });
-    }
-    const exist = await FormDataModel.findById(req.user.id);
-    if (!exist) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.status(200).json(exist);
-  } catch (error) {
-    console.error("Error in GET /admin-route:", error);
+    console.error("Error in GET /user:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -120,27 +94,22 @@ router.post("/otp", async (req, res) => {
     return res.status(400).json({ error: "Email is required" });
   }
 
-  // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: "Invalid email format" });
   }
 
-  const otp = crypto.randomInt(100000, 999999).toString();
+  const otp = randomInt(100000, 999999).toString();
 
   try {
-    // Send OTP via email
-    await transporter.sendMail({
+    await sendMail({
       from: process.env.USER,
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP code is ${otp}`,
     });
 
-    console.log("OTP sent successfully");
-
-    // Save OTP to the database
-    const user = await FormDataModel.findOne({ email });
+    const user = await findOne({ email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -148,7 +117,7 @@ router.post("/otp", async (req, res) => {
     const newOtp = new Otp({
       userId: user._id,
       otp,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // Expires in 5 minutes
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     });
 
     await newOtp.save();
@@ -159,7 +128,6 @@ router.post("/otp", async (req, res) => {
   }
 });
 
-// verify otp
 router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
 
@@ -168,11 +136,11 @@ router.post("/verify-otp", async (req, res) => {
   }
 
   try {
-    const user = await FormDataModel.findOne({ email });
+    const user = await findOne({ email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    const otpRecord = await Otp.findOne({ userId: user._id, otp });
+    const otpRecord = await _findOne({ userId: user._id, otp });
     if (!otpRecord) {
       return res.status(400).json({ error: "Invalid OTP" });
     }
@@ -186,4 +154,4 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

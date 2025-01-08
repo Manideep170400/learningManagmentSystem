@@ -1,6 +1,7 @@
-const router = require("express").Router();
-const FormDataModel = require("../models/FormData");
-const { hashPassworded } = require("../bycrpt/index");
+import { Router } from "express"; 
+import { hashPassworded } from "../bycrpt/index.mjs";
+
+const router = Router();
 
 router.post("/register", async (req, res) => {
   const { email, password, role, name } = req.body;
@@ -12,14 +13,14 @@ router.post("/register", async (req, res) => {
     if (!role) {
       return res.status(500).json("Role is required");
     }
-    const user = await FormDataModel.findOne({ email });
+    const user = await findOne({ email });
     if (user) {
       return res.status(400).json("User already registered");
     }
 
     const hashedPassword = await hashPassworded(password);
 
-    const newUser = await FormDataModel.create({
+    const newUser = await create({
       email,
       password: hashedPassword,
       role,
@@ -39,4 +40,4 @@ router.post("/register", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

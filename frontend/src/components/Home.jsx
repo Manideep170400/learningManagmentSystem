@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Alert from "@mui/material/Alert"; // Correct import from react-bootstrap
+import Alert from "@mui/material/Alert";
 
 const Home = () => {
   const styles = {
@@ -13,7 +13,7 @@ const Home = () => {
   };
 
   const [message, setMessage] = useState("");
-  const [alertVisible, setAlertVisible] = useState(true); // Corrected state name (alertVisible)
+  const [alertVisible, setAlertVisible] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {

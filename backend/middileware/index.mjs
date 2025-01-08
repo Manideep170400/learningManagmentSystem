@@ -1,4 +1,5 @@
-const { decode } = require("../jwt/index");
+import jwt from "../jwt/index.mjs";
+const { decode } = jwt;
 const HEADER_AUTH_KEY = "x-auth-token";
 const jwtMiddleware = async (req, res, next) => {
   try {
@@ -18,4 +19,4 @@ const jwtMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = jwtMiddleware;
+export default jwtMiddleware;
