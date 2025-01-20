@@ -5,6 +5,7 @@ import Login from "./Login";
 import Register from "./Register";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SendOtp from "./sendOtp.";
+
 function App() {
   return (
     <div style={{ marginTop: "-3.5rem" }}>

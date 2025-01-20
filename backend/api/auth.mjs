@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { randomInt } from "crypto";
 import jwt from "../jwt/index.mjs";
+import formData from "../models/FormData.mjs";
+import Otp from "../models/userOtpVerification.mjs";
 const { encode, decode } = jwt;
 import { comparePassword } from "../bycrpt/index.mjs"; // Correct import
 import jwtMiddleware from "../middileware/index.mjs";
@@ -16,7 +18,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const exist = await findOne({ email });
+    const exist = await formData.findOne({ email });
     console.log("login", exist);
     if (!exist) {
       return res.status(500).json({ error: "User not found" });
@@ -72,7 +74,7 @@ router.get("/user", jwtMiddleware, async (req, res) => {
     if (!req.user || !req.user.id) {
       return res.status(403).json({ error: "Invalid token" });
     }
-    const exist = await findById(req.user.id);
+    const exist = await formData.findById(req.user.id);
     if (!exist) {
       return res.status(500).json({ error: "User not found" });
     }
@@ -109,7 +111,7 @@ router.post("/otp", async (req, res) => {
       text: `Your OTP code is ${otp}`,
     });
 
-    const user = await findOne({ email });
+    const user = await formData.findOne({ email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -136,11 +138,11 @@ router.post("/verify-otp", async (req, res) => {
   }
 
   try {
-    const user = await findOne({ email });
+    const user = await formData.findOne({ email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    const otpRecord = await _findOne({ userId: user._id, otp });
+    const otpRecord = await Otp.findOne({ userId: user._id, otp });
     if (!otpRecord) {
       return res.status(400).json({ error: "Invalid OTP" });
     }
